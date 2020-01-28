@@ -1,0 +1,31 @@
+.canvas {
+  position: relative;
+}
+
+.postIt {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  min-height: 150px;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  border-radius: 15px;
+}
+
+.done {
+  opacity: 0.5;
+}
+
+.postIt-text {
+  margin: auto;
+  padding: 5px;
+}
+
+.postIt-title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 10px;
+}
