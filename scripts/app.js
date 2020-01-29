@@ -47,6 +47,30 @@ const init = {
     app.newPostIt('Title1','This is some random text');
     app.newPostIt('Title1','Another app: This is some random text');
     app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
+    app.newPostIt('Title1','This is some random text');
+    app.newPostIt('Title1','Another app: This is some random text');
+    app.newPostIt('Title1','Another postIt: This is some random text');
   }
 }
 
@@ -130,13 +154,14 @@ const view = {
       box.appendChild(text);
       canvas.appendChild(box);
       this.setUpPostItEventListeners(box);
+      this.setUpDragEventListeners(box);
     }
   },
   clear : function () {
     let canvas = document.querySelector('.canvas');
     canvas.innerHTML = '';
   },
-  setUpPostItEventListeners: function (element) {
+  setUpClickEventListeners: function (element) {
     //Title and content needs eventlistener on clicked
     //SpanDone and SpanDelete need eventlistener on clicked
     const spanDeleteClick = function (uid) {
@@ -151,7 +176,7 @@ const view = {
     const contentClick = function (target) {
       console.log('targetClick');
     };
-
+    //Add click event listeners
     element.addEventListener('click', function (event) {
       let target = event.target;
       let targetClass = target.className;
@@ -171,6 +196,41 @@ const view = {
           console.log('Clicked somewhere else');
       }
     });
+  },
+  setUpDragEventListeners: function (element) {
+    const moveAt = function (pageX, pageY) {
+      element.style.left = pageX - element.offsetWidth / 2 + 'px';
+      element.style.top = pageY - element.offsetHeight / 2 + 'px';
+    };
+    const onMouseMove = function (event) {
+      moveAt(event.pageX, event.pageY);
+    };
+    const onMouseUp = function (event) {
+      element.removeEventListener('mousemove', onMouseMove);
+      element.removeEventListener('mouseup', onMouseUp);
+    }
+    const onMouseDown = function (event) {
+      debugger;
+      if (event.target !== '.postIt') {
+        return;
+      }
+      //Make element absolute and place it on top
+      element.style.position = 'absolute';
+      element.style.zIndex = 1000;
+      //Append it to body instead of to canvas
+      document.body.append(element);
+      //Put the postIt at the center of the mouse click
+      moveAt(event.pageX, event.pageY);
+      //Move postIt at MouseMove
+      element.addEventListener('mousemove', onMouseMove);
+      //Drop postIt at mouseUp
+      element.addEventListener('mouseup', onMouseUp);
+    }
+    element.addEventListener('mousedown', onMouseDown);
+  },
+  setUpPostItEventListeners: function (element) {
+    this.setUpClickEventListeners(element);
+    this.setUpDragEventListeners(element);
   }
 }
 
