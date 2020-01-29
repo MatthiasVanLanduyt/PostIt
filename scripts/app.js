@@ -23,6 +23,14 @@ const app = {
     postIt.content = content;
     view.render();
   },
+  movePostIt: function (uid, posX, posY) {
+    let position = this.postIts.findIndex(postIt => postIt.uid === uid);
+    if (position > -1) {
+      let postIt = this.postIts[position];
+      postIt.posX = posX;
+      postIt.posY = posY;
+    }
+  },
   deletePostIt : function(uid) {
     let position = this.postIts.findIndex(postIt => postIt.uid === uid);
     console.log(position);
@@ -199,8 +207,9 @@ const view = {
   },
   setUpDragEventListeners: function (element) {
     const moveAt = function (pageX, pageY) {
-      element.style.left = pageX - element.offsetWidth / 2 + 'px';
-      element.style.top = pageY - element.offsetHeight / 2 + 'px';
+      let canvas = document.querySelector('.canvas');
+      element.style.left = pageX - element.offsetWidth / 2 - canvas.offsetLeft  + 'px';
+      element.style.top = pageY - element.offsetHeight / 2 - canvas.offsetTop + 'px';
     };
     const onMouseMove = function (event) {
       moveAt(event.pageX, event.pageY);
@@ -208,17 +217,24 @@ const view = {
     const onMouseUp = function (event) {
       element.removeEventListener('mousemove', onMouseMove);
       element.removeEventListener('mouseup', onMouseUp);
+      let targetUid = element.id;
+      let canvas = document.querySelector('.canvas');
+      debugger;
+      //Write back new position. Remove possibility of having negative left and top values
+      let left = Math.max(canvas.offsetLeft - element.offsetWidth + 15, event.pageX - element.offsetWidth / 2 - canvas.offsetLeft);
+      let top =  Math.max(canvas.offsetTop - element.offsetHeight + 15, event.pageY - element.offsetHeight / 2 - canvas.offsetTop);
+      app.movePostIt (targetUid, left, top);
+
     }
     const onMouseDown = function (event) {
-      debugger;
-      if (event.target !== '.postIt') {
+      if (event.target.classList.contains('postIt') === false) {
         return;
       }
       //Make element absolute and place it on top
-      element.style.position = 'absolute';
+      //element.style.position = 'absolute';
       element.style.zIndex = 1000;
       //Append it to body instead of to canvas
-      document.body.append(element);
+      // document.body.append(element);
       //Put the postIt at the center of the mouse click
       moveAt(event.pageX, event.pageY);
       //Move postIt at MouseMove
